@@ -1,0 +1,1 @@
+Lithuanian Electrical Grid Pulse - Project for ingesting Lithanian grid price and data, modeled with dbt and served as a visual dashboard
