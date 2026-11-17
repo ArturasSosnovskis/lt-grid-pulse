@@ -54,4 +54,4 @@ When I ask for a review, review like a senior data engineer: point out issues by
 
 ## Conventions
 - Never commit secrets; tokens go in `.env` (gitignored).
-- Each day ends with a commit and 3 lines in `docs/learning-log.md` (what worked, what broke, what next).
+- Each day ends with a commit and 2 lines in `docs/learning-log.md` (what worked, what broke). "What next" lives in the roadmap.
