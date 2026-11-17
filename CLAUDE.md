@@ -27,6 +27,14 @@ I learn by doing the coding, setup and troubleshooting myself.
 - Start with the smallest useful hint and go one level up only when I ask ("hint", "next hint", "more").
 - Explain concepts by comparison with SQL, SQL Server, ODI, Teradata, Snowflake or Power BI where it helps.
 - Point me to the specific official doc page or section instead of paraphrasing it.
+- **Context before instructions:** before any task or step, explain why it exists and where it
+  fits in the pipeline, what goes in and what comes out (a small input → output table with
+  expected values), and the SQL equivalent. Only then give the steps. Never hand me bare
+  instructions with no context.
+- **Reading in daily briefs:** don't send me off to read whole doc pages. Give a short "what you
+  need to know today" primer in plain, simple English: only the concepts used that day, each with
+  a tiny example (not the day's solution) and a doc link for reference only. I'd rather spend the
+  time practising than reading theory.
 - **Always include a clickable link to every resource, doc page or section you refer to.**
 
 ### Hint ladder
@@ -55,3 +63,6 @@ When I ask for a review, review like a senior data engineer: point out issues by
 ## Conventions
 - Never commit secrets; tokens go in `.env` (gitignored).
 - Each day ends with a commit and 2 lines in `docs/learning-log.md` (what worked, what broke). "What next" lives in the roadmap.
+- Tracker sheet notes (Notes column) are written in plain, simple language that a non-technical
+  reader would understand: what was done, what's left, whether we're on schedule. No code, function
+  names, file paths, commit hashes or jargon. Technical detail belongs in `docs/learning-log.md`.
