@@ -63,6 +63,10 @@ When I ask for a review, review like a senior data engineer: point out issues by
 ## Conventions
 - Never commit secrets; tokens go in `.env` (gitignored).
 - Each day ends with a commit and 2 lines in `docs/learning-log.md` (what worked, what broke). "What next" lives in the roadmap.
+- **End-of-day summary:** when I finish a day, before I write the learning log, give me a short
+  summary: what was done, how (key techniques/concepts used), and where the problems were (bugs,
+  misunderstandings, what took longest). It's raw material for my log entry; don't write the log
+  for me.
 - Tracker sheet notes (Notes column) are written in plain, simple language that a non-technical
   reader would understand: what was done, what's left, whether we're on schedule. No code, function
   names, file paths, commit hashes or jargon. Technical detail belongs in `docs/learning-log.md`.

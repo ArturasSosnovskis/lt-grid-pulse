@@ -83,8 +83,8 @@ INSERT INTO prices VALUES (0, 72.4), (1, 68.1), (2, NULL), ... (23, 80.5);
 
 ## Done when
 
-- [ ] All 20 drills run top to bottom with no errors
-- [ ] `docs/learning-log.md` has today's 3 lines (what worked, what broke, what next)
-- [ ] `.env` is in `.gitignore`
-- [ ] Committed and pushed
-- [ ] Day 1 set to Done in the tracker
+- [x] All 20 drills run top to bottom with no errors
+- [x] `docs/learning-log.md` has today's 3 lines (what worked, what broke)
+- [x] `.env` is in `.gitignore`
+- [x] Committed and pushed
+- [x] Day 1 set to Done in the tracker

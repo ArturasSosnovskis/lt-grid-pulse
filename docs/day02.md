@@ -9,13 +9,13 @@ Today you build and test the functions that handle this, once, for every later i
 
 ## Done when
 
-- [ ] `src/lt_grid_pulse/utils/__init__.py` exists (empty)
-- [ ] `src/lt_grid_pulse/utils/timez.py` has the 5 functions below, each with a one-line docstring
-- [ ] `tests/test_timez.py`: `uv run pytest` passes with 10+ tests, including both 2026 DST days
-- [ ] Bad input raises a clear `ValueError`, and a test checks it
-- [ ] `drills/day02_io.py`: JSON write/read + missing-file handling
-- [ ] `data/` added to `.gitignore`
-- [ ] Committed and pushed (include yesterday's `CLAUDE.md` and `learning-log.md` changes)
+- [x] `src/lt_grid_pulse/utils/__init__.py` exists (empty)
+- [x] `src/lt_grid_pulse/utils/timez.py` has the 5 functions below, each with a one-line docstring
+- [x] `tests/test_timez.py`: `uv run pytest` passes with 10+ tests, including both 2026 DST days
+- [x] Bad input raises a clear `ValueError`, and a test checks it
+- [x] `drills/day02_io.py`: JSON write/read + missing-file handling
+- [x] `data/` added to `.gitignore`
+- [x] Committed and pushed (include yesterday's `CLAUDE.md` and `learning-log.md` changes)
 - [ ] 2 lines in `docs/learning-log.md`; Day 2 set to Done in the tracker
 
 ## Plan (about 4 hours)

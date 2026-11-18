@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, date, time, timedelta
+from datetime import datetime, timezone, time, timedelta
 from zoneinfo import ZoneInfo
 
 VILNIUS = ZoneInfo("Europe/Vilnius")
@@ -48,8 +48,3 @@ def intervals_in_local_day(day, minutes=15):
     if (end - start) % timedelta(minutes=minutes) != timedelta(seconds=0):
         raise ValueError(f"{minutes} minutes doesn't divide {day} evenly")
     return (end - start) // timedelta(minutes=minutes)
-
-
-if __name__ == "__main__":
-    day = date(2026, 3, 29)
-    print(intervals_in_local_day(day))
