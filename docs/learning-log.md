@@ -10,3 +10,8 @@ Functions return `None` when a branch of the flow control in it has no `return`.
 
 - **Worked:** Built a time related module `timez.py` with functions to parse ISO strings to UTC, convert from local time to UTC and vice versa, get UTC start and end datetimes for a local timezone date, calculate intervals in minutes for a given day. Wrote pytests, including daylight saving edge cases.
 - **Broke:** Problems with timezone conversions and calculating day bounds - firstly, need to find the bound in local time, only then convert to UTC. The test took the longest to work out, especially the part what each test should check and how it should do that.
+
+## Day 3 (Wed 18 – Thu 19 Nov 2026): Elering data ingestion,
+
+- **Worked:** Built a module `elering.py` with functions to ingest data from Elering via API call, filter and clean up the received data, with checks for incomplete days, `None` prices and a 200 response that still says `success: false`.
+- **Broke:** I still don't quite understand the HTTP part of the code, error handling is still fuzzy in my mind, and edge cases are something I still forget.
