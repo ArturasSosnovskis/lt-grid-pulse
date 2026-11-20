@@ -4,6 +4,7 @@ from lt_grid_pulse.utils.timez import (
     to_utc,
     local_day_bounds_utc,
     intervals_in_local_day,
+    dates_in_period,
     VILNIUS,
 )
 from datetime import datetime, timezone, timedelta, date
@@ -140,3 +141,31 @@ def test_intervals_in_local_day_validity(day, expected_intervals, minutes):
 def test_intervals_in_local_day_rejects_uneven_intervals(minutes):
     with pytest.raises(ValueError):
         intervals_in_local_day(date(2026, 10, 10), minutes=minutes)
+
+
+@pytest.mark.parametrize(
+    "start_date, end_date, dates_count",
+    [
+        (date(2025,12,1), date(2025,12,31), 31),     
+        (date(2025,2,13), date(2026,2,13), 366),
+        (date(2025,2,13), date(2025,2,13), 1),
+        (date(2026,3,28), date(2026,3,30), 3),           
+    ]
+)
+def test_dates_in_period_correct_return(start_date,end_date, dates_count):
+    result = dates_in_period(start_date,end_date) 
+    assert result[0] == start_date
+    assert result[-1] == end_date
+    assert len(result) == dates_count
+
+
+@pytest.mark.parametrize(
+    "start_date, end_date",
+    [
+        (date(2026,10,31), date(2026,10,1)),            
+    ]
+)
+def test_dates_in_period_correct_value_error_raise(start_date,end_date):
+     with pytest.raises(ValueError):
+            dates_in_period(start_date,end_date)
+

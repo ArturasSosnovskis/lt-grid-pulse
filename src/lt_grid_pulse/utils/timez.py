@@ -12,6 +12,7 @@ def parse_iso(string_datetime):
         raise ValueError(f"No timezone offset in {string_datetime!r}")
     return parsed_datetime.astimezone(timezone.utc)
 
+
 def to_vilnius(dt):
     """Checks if datetime is timezone aware and converts to Vilnius local time"""
 
@@ -40,7 +41,7 @@ def local_day_bounds_utc(day):
 
 
 def intervals_in_local_day(day, minutes=15):
-    """Returns the number of intervals of speficied minutes. Default minutes = 15"""
+    """Return the number of intervals of speficied minutes. Default minutes = 15"""
     if minutes <= 0:
         raise ValueError(f"{minutes} must be > 0")
     start, end = local_day_bounds_utc(day)
@@ -48,3 +49,21 @@ def intervals_in_local_day(day, minutes=15):
     if (end - start) % timedelta(minutes=minutes) != timedelta(seconds=0):
         raise ValueError(f"{minutes} minutes doesn't divide {day} evenly")
     return (end - start) // timedelta(minutes=minutes)
+
+
+def dates_in_period(start_date, end_date):
+    """Return every date from start_date to end_date, both included. Raise ValueError if start_date is after end_date."""
+    day_count = (end_date - start_date).days + 1
+    if day_count <= 0:
+        raise ValueError (f"start_date {start_date} comes after end_date {end_date}")
+
+    calendar_start = start_date
+    calendar = []
+
+    while day_count > 0:
+        calendar.append(calendar_start)
+        calendar_start += timedelta(days=1)
+        day_count -= 1
+
+    return calendar
+
