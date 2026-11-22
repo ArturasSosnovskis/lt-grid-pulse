@@ -11,6 +11,7 @@ from lt_grid_pulse.ingest.elering import (
 
 app = typer.Typer()
 
+
 @app.command()
 def elering(
     start: Annotated[
@@ -32,19 +33,19 @@ def elering(
     except ValueError as exc:
         raise typer.BadParameter(message=str(exc))
 
+    out.parent.mkdir(exist_ok=True, parents=True)
+
     all_rows = []
     for day in calendar:
         daily_dataset = fetch_elering_api_nps_controller(day)
         filtered_dataset = parse_and_filter(day, daily_dataset)
         all_rows.extend(filtered_dataset)
         print(f"{day}: {len(filtered_dataset)} rows returned")
-    
-    all_rows_df = pd.DataFrame(all_rows)
-    row_count = len(all_rows_df)
-    column_types = all_rows_df.dtypes
-    print(f"row count: {row_count}")
-    print(column_types)
 
+    all_rows_df = pd.DataFrame(all_rows)
+
+    all_rows_df.to_parquet(out,index=False)
+    print(f"Wrote {len(all_rows_df)} rows to: {out}")
 
 @app.callback()
 def callback():
