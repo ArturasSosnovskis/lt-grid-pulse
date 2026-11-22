@@ -41,7 +41,7 @@ def local_day_bounds_utc(day):
 
 
 def intervals_in_local_day(day, minutes=15):
-    """Return the number of intervals of speficied minutes. Default minutes = 15"""
+    """Return the number of intervals of specified minutes. Default minutes = 15"""
     if minutes <= 0:
         raise ValueError(f"{minutes} must be > 0")
     start, end = local_day_bounds_utc(day)
@@ -55,7 +55,7 @@ def dates_in_period(start_date, end_date):
     """Return every date from start_date to end_date, both included. Raise ValueError if start_date is after end_date."""
     day_count = (end_date - start_date).days + 1
     if day_count <= 0:
-        raise ValueError (f"start_date {start_date} comes after end_date {end_date}")
+        raise ValueError(f"start_date {start_date} comes after end_date {end_date}")
 
     calendar_start = start_date
     calendar = []
@@ -66,4 +66,3 @@ def dates_in_period(start_date, end_date):
         day_count -= 1
 
     return calendar
-

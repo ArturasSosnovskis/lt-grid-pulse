@@ -29,14 +29,14 @@ def elering(
     """Fetch Elering LT electricity prices for a date range and store them to a Parquet file."""
 
     try:
-        calendar = dates_in_period(start, end)
+        days = dates_in_period(start, end)
     except ValueError as exc:
         raise typer.BadParameter(message=str(exc))
 
     out.parent.mkdir(exist_ok=True, parents=True)
 
     all_rows = []
-    for day in calendar:
+    for day in days:
         daily_dataset = fetch_elering_api_nps_controller(day)
         filtered_dataset = parse_and_filter(day, daily_dataset)
         all_rows.extend(filtered_dataset)
@@ -44,10 +44,11 @@ def elering(
 
     all_rows_df = pd.DataFrame(all_rows)
 
-    all_rows_df.to_parquet(out,index=False)
+    all_rows_df.to_parquet(out, index=False)
     print(f"Wrote {len(all_rows_df)} rows to: {out}")
+
 
 @app.callback()
 def callback():
-    """Placeholder for high-level description."""
+    """LT Grid Pulse: ingest Lithuanian grid, price and weather data."""
     pass

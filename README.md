@@ -1,6 +1,6 @@
 # LT Grid Pulse
 
-Lithuanian Electrical Grid Pulse - Project for ingesting Lithanian grid price and data, modeled with dbt and served as a visual dashboard
+A data pipeline for the Lithuanian power grid: it ingests day-ahead electricity prices, grid load and generation, and weather data, models them with dbt into a star schema, and serves them on a dashboard.
 
 **Status: v0.1.** The Elering price ingest runs from the command line and writes Parquet.
 More sources, orchestration and modelling come in later versions.

@@ -1,7 +1,7 @@
 [project]
 name = "lt-grid-pulse"
 version = "0.1.0"
-description = "Add your description here"
+description = "Pipeline for Lithuanian grid, price and weather data: ingest, dbt models, dashboard"
 readme = "README.md"
 authors = [
     { name = "Art Sos", email = "arturas.sosnovskis@gmail.com" }

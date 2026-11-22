@@ -46,15 +46,15 @@ a half-open `[start, end)` window, as on Day 2.
 ## Done when
 
 - [x] Work done on branch `feat/elering-cli`, not on `main`
-- [x] `typer` and `pyarrow` added with `uv add`; `pyproject.toml` and `uv.lock` chaxged and committed
+- [x] `typer` and `pyarrow` added with `uv add`; `pyproject.toml` and `uv.lock` changed and committed
 - [x] `src/lt_grid_pulse/cli.py` holds the CLI; `uv run lt-grid-pulse --help` works
 - [x] Out 1-4 from the table above all behave as expected
 - [x] The output folder is created if missing; running the same command twice gives the same file (overwrite)
 - [x] A test for the day-range helper (Step 4); `uv run pytest` all green
 - [x] At least 3 commits on the branch, messages in the style from the primer
-- [] Branch pushed, PR opened, reviewed on GitHub, merged into `main`
+- [ ] Branch pushed, PR opened, reviewed on GitHub, merged into `main`
 - [ ] `main` pulled locally, branch deleted, annotated tag `v0.1` created and pushed
-- [ ] README: a "Usage" section with the command
+- [x] README: a "Usage" section with the command
 - [ ] 2 lines in `docs/learning-log.md`; Day 5 set to Done in the tracker; Week 1 practice tasks received
 
 ## Plan (about 4 hours)
