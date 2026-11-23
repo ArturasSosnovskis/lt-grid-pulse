@@ -39,10 +39,10 @@ Raw rows below use `1794866400` = 2026-11-17 00:00 Vilnius = `2026-11-16 22:00:0
 | In | `{"timestamp": 1794866400, "price": 72.4}` | good row → `ts_utc` 2026-11-16 22:00 UTC, `price` 72.4 |
 | In | `{"timestamp": 1794866400, "price": null}` | quarantined, reason mentions `price` |
 | Out 1 | `elering --start 2026-10-01 --end 2026-10-31 --out data/raw/elering_2026-10.parquet` | **2,980 rows, identical** to the v0.1 file; summary says 0 quarantined |
-| Out 2 | same run | `data/raw/elering_2026-10_quarantine.parquet` exists with **0 rows** but the right columns |
-| Out 3 | Out 1 again | same two files, same counts (idempotent) |
-| Tests | a fake 96-row day with 1 bad price | 95 good rows, 1 quarantined, **no** error |
-| Tests | a fake 95-row day, all good | `ValueError` (incomplete day, as on Day 3) |
+| Out 2 | same run | no `data/raw/elering_2026-10_quarantine.parquet` (and an old one is removed) |
+| Out 3 | Out 1 again | same file, same counts, still no quarantine file (idempotent) |
+| Tests | a fake day (97 rows, like Elering) with 1 bad price inside the day | 95 good rows, 1 quarantined, **no** error |
+| Tests | a fake day cut to 95 rows | `ValueError` (incomplete day, as on Day 3) |
 
 **Decisions made:**
 - **Strict mode** on the raw model: Elering sends numbers, so a price that arrives as text means the API changed.
@@ -54,20 +54,21 @@ Raw rows below use `1794866400` = 2026-11-17 00:00 Vilnius = `2026-11-16 22:00:0
   A bad row is a row problem (quarantine it); a missing row is a day problem (still a `ValueError`).
   Known simplification: a quarantined row is assumed to belong to the requested day (its timestamp may be the
   broken part). Say so in the docstring.
-- **Quarantine file is always written**, even with 0 rows. Otherwise a stale file from an earlier run would stay
-  next to a clean new one and mislead the reader.
+- **Quarantine file only when there are bad rows; a clean run deletes any old one** (changed during the day,
+  23 Nov: user chose this over "always write a 0-row file"). Either way, a stale file from an earlier run must
+  not stay next to a clean new one.
 - **Exit code stays 0** when rows are quarantined; the summary line reports them. (Failing the run on bad data
   comes on Day 26, data quality.)
 
 ## Done when
 
 - [x] Work on branch `feat/elering-validation`; `pydantic` added with `uv add` as a direct dependency
-- [ ] Every function in `timez.py` and `elering.py` has type hints on parameters and return value
-- [ ] A pydantic model for one raw Elering row; the 9 rows from Step 4 behave as in the table (as tests)
-- [ ] A dataclass for one quarantined row
-- [ ] The parse step returns good rows **and** quarantined rows; the 2 fake-day tests pass
-- [ ] CLI writes both files and prints a quarantine count; Out 1-3 as expected
-- [ ] New October file identical to the v0.1 file
+- [x] Every function in `timez.py` and `elering.py` has type hints on parameters and return value
+- [x] A pydantic model for one raw Elering row; the 9 rows from Step 4 behave as in the table (as tests)
+- [x] A dataclass for one quarantined row
+- [x] The parse step returns good rows **and** quarantined rows; the fake-day tests pass
+- [x] CLI writes both files and prints a quarantine count; Out 1-3 as expected
+- [x] New October file identical to the v0.1 file
 - [ ] `uv run pytest` all green; PR opened, reviewed, merged; branch deleted
 - [ ] Week 1 practice: at least tasks 3 (exceptions) and 7 (type at the edges) done (they fit today)
 - [ ] 2 lines in `docs/learning-log.md`
@@ -300,18 +301,26 @@ Wrong looks like: the raw row stored as a dict: Parquet then needs one type per 
 `"price": "abc"` next to one with `72.4` breaks the write.
 
 **5b. The split.** Change `parse_and_filter` (or add a function beside it) so that for one day it:
-1. checks every raw row against the Step 4 model;
-2. good rows → converted and window-filtered as before; bad rows → a quarantine record with a short reason;
-3. runs the completeness check with the rule from "Decisions made";
-4. gives back **both** lists.
+1. **places each row in time first:** a row whose timestamp is missing or not an int can't be placed →
+   quarantine it (assumed to be ours: the documented simplification);
+2. converts the timestamp and **skips rows outside the day's window** (as on Day 3);
+3. checks the remaining in-window rows against the Step 4 model: good → `{ts_utc, price}`; bad → a quarantine
+   record with a short reason;
+4. runs the completeness check with the rule from "Decisions made";
+5. gives back **both** lists.
+
+**Why filter before validating (changed during the day, 23 Nov):** Elering returns one extra row per request
+(97 for a 96-interval day: the window end is inclusive). Validating first would quarantine and count that
+next-day row when it's bad, so 96 good + 1 quarantined = 97 ≠ 96 → a false "incomplete day" error.
 
 | Input (day 2026-11-17) | Good rows | Quarantined | Error? |
 |---|---|---|---|
-| fake day: 96 good rows | 96 | 0 | no |
-| fake day: 96 rows, row 10 has price `None` | 95 | 1, reason mentions price | no |
-| fake day: 95 good rows | — | — | `ValueError` |
+| fake day: 97 good rows | 96 | 0 | no |
+| fake day: 97 rows, row index 9 has price `None` | 95 | 1, reason mentions price | no |
+| fake day: 97 rows, row index 96 (next day) has price `None` | 96 | 0 | no |
+| fake day: first 95 rows only | — | — | `ValueError` |
 
-Build the fake days inside the test (96 timestamps, 900 seconds apart, from `1794866400`). No HTTP in these tests.
+Build the fake days inside the test (97 timestamps, 900 seconds apart, from `1794866400`: 96 for the day + Elering's extra next-day row). No HTTP in these tests.
 Wrong looks like: the call site keeps only one of the two returned lists (Week 1 "value created but not kept");
 the error catch is so broad it also hides a bug in your own code; the 95+1 case raises because the check counts
 only good rows.
@@ -337,8 +346,8 @@ Then fix the `__main__` block at the bottom of `elering.py`: it calls the old si
 | # | What | Done when | Wrong looks like |
 |---|---|---|---|
 | 6a | Collect quarantined rows from all days into one list, like the good rows | October: 0 | only the last day's survive (overwritten list) |
-| 6b | Write them to `<out name>_quarantine.parquet` beside `--out`, always, even with 0 rows | file exists, 0 rows, 3 named columns | no file on a clean run; a 0-row file with **no** columns |
-| 6c | Summary line: rows written, rows quarantined, both paths | `Wrote 2980 rows to ...; quarantined 0 rows to ...` | — |
+| 6b | Write them to `<out name>_quarantine.parquet` beside `--out` when there are any; on a clean run remove an old one | clean run: no quarantine file, even after a run that had one | an old quarantine file survives a clean re-run |
+| 6c | Summary lines: rows written + path; quarantined rows + path, or "No rows quarantined" | `Wrote 2980 rows to: data/raw/elering_2026-10.parquet` / `No rows quarantined` | — |
 | 6d | Regression: read the new October file and the `_v01` copy, check they're identical | identical | different dtypes (e.g. UTC lost) or a different row order |
 
 Update README's output contract with the quarantine file. Commit.
