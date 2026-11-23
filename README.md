@@ -51,6 +51,19 @@ One row per 15-minute interval:
 Rows per local day: 96 normally, 92 on the spring clock change, 100 on the autumn one.
 October 2026 gives 2,980 rows.
 
+Every raw row is checked before it's kept: the price must be a number between -500 and 4,000 EUR/MWh,
+the timestamp a whole number of seconds. Rows that fail never reach the output file; they go to a
+**quarantine file** next to it, `<out name>_quarantine.parquet` (e.g. `elering_2026-10_quarantine.parquet`):
+
+| Column | Type | Meaning |
+|---|---|---|
+| `day` | date | the requested local day the row came with |
+| `raw` | text | the original row as JSON, unchanged |
+| `reason` | text | why it failed, e.g. `price: Input should be a valid number` |
+
+The quarantine file is written only when at least one row failed; a clean run removes an old one.
+A bad row doesn't stop the run: good + quarantined rows must still add up to the day's full count.
+
 ### Behaviour on errors
 
 - Start date after end date: the command stops before any API call, exit code 2.
