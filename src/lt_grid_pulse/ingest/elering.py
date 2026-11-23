@@ -7,7 +7,7 @@ BASE_URL = "https://dashboard.elering.ee/api/nps/price"
 LOCATION_CODE = "lt"
 
 
-def fetch_elering_api_nps_controller(day):
+def fetch_elering_api_nps_controller(day: date) -> list[dict[str, int | float | None]]:
     """Fetch Elering day-ahead prices for one Vilnius calendar day; return the raw LT rows."""
     start_dt, end_dt = local_day_bounds_utc(day)
     params = {"start": start_dt.isoformat(), "end": end_dt.isoformat()}
@@ -51,8 +51,8 @@ def fetch_elering_api_nps_controller(day):
     return data["data"][LOCATION_CODE]
 
 
-def parse_and_filter(day, data):
-    """Filter out of bound rows and parse UNIX timestamp values to utc datetime. Also compares excpected and received row counts, raises ValueError is not equal"""
+def parse_and_filter(day: date, data: list[dict[str, int | float | None]]) -> list[dict[str, datetime | int | float | None]]:
+    """Filter out of bound rows and parse UNIX timestamp values to utc datetime. Also compares expected and received row counts, raises ValueError, if not equal"""
     start_dt, end_dt = local_day_bounds_utc(day)
     converted = []
     for row in data:
@@ -68,7 +68,7 @@ def parse_and_filter(day, data):
     return converted
 
 
-def daily_min_max_avg_row_cnt(data):
+def daily_min_max_avg_row_cnt(data: list[dict[str, datetime | int | float | None]]) -> dict[str, int | float | None]:
     """Return min, max, and avg aggregates and valid/invalid price row for Elering batch"""
     data_with_nones_filtered = [row for row in data if row["price"] is not None]
     data_with_nones_filtered_cnt = len(data_with_nones_filtered)
