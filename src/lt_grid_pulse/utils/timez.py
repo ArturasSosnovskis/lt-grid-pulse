@@ -1,10 +1,10 @@
-from datetime import datetime, timezone, time, timedelta
+from datetime import datetime, timezone, time, timedelta, date
 from zoneinfo import ZoneInfo
 
 VILNIUS = ZoneInfo("Europe/Vilnius")
 
 
-def parse_iso(string_datetime):
+def parse_iso(string_datetime: str) -> datetime:
     """This function firstly checks datetime format and timezone availability and converts to UTC if it is valid."""
     parsed_datetime = datetime.fromisoformat(string_datetime)
 
@@ -13,7 +13,7 @@ def parse_iso(string_datetime):
     return parsed_datetime.astimezone(timezone.utc)
 
 
-def to_vilnius(dt):
+def to_vilnius(dt: datetime) -> datetime:
     """Checks if datetime is timezone aware and converts to Vilnius local time"""
 
     if dt.tzinfo is None:
@@ -21,7 +21,7 @@ def to_vilnius(dt):
     return dt.astimezone(VILNIUS)
 
 
-def to_utc(dt):
+def to_utc(dt: datetime) -> datetime:
     """Checks if datetime is timezone aware and converts to UTC"""
 
     if dt.tzinfo is None:
@@ -29,7 +29,7 @@ def to_utc(dt):
     return dt.astimezone(timezone.utc)
 
 
-def local_day_bounds_utc(day):
+def local_day_bounds_utc(day: date) -> tuple[datetime, datetime]:
     """Take a local date and converts it to a datetime range equivalent (in UTC)"""
     time_placeholder = time()
     start_dt = to_utc(datetime.combine(day, time_placeholder, tzinfo=VILNIUS))
@@ -40,7 +40,7 @@ def local_day_bounds_utc(day):
     return start_dt, end_dt
 
 
-def intervals_in_local_day(day, minutes=15):
+def intervals_in_local_day(day: date, minutes: int = 15) -> int:
     """Return the number of intervals of specified minutes. Default minutes = 15"""
     if minutes <= 0:
         raise ValueError(f"{minutes} must be > 0")
@@ -51,7 +51,7 @@ def intervals_in_local_day(day, minutes=15):
     return (end - start) // timedelta(minutes=minutes)
 
 
-def dates_in_period(start_date, end_date):
+def dates_in_period(start_date: date, end_date: date) -> list[date]:
     """Return every date from start_date to end_date, both included. Raise ValueError if start_date is after end_date."""
     day_count = (end_date - start_date).days + 1
     if day_count <= 0:
